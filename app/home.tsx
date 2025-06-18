@@ -1,25 +1,16 @@
-import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import {
   Alert,
-  Image,
+  KeyboardAvoidingView,
   Platform,
+  ScrollView,
   Text,
   TextInput,
-  ToastAndroid,
   TouchableOpacity,
   View
 } from 'react-native';
 
-type RootStackParamList = {
-  '(tabs)': undefined;
-};
-
 export default function Home() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
 
@@ -28,156 +19,189 @@ export default function Home() {
   }
 
   const showToast = (message: string) => {
-    console.log(Platform.OS)
-    if (Platform.OS === 'android') {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
-    } else {
-      Alert.alert('提示', message);
-    }
+    Alert.alert('提示', message);
   };
 
   return (
-    <>
-      <LinearGradient
-        colors={['#3d7cff', '#2bbaff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        className='h-[200px] flex justify-center items-center'
-      >
-        <Image 
-          source={require('../assets/images/logo.png')} 
-          className='w-[120px] h-[120px]'
-        />
-      </LinearGradient>
-      <View className='flex-1 bg-white rounded-t-[24px] -mt-8'>
-        <Text className='text-[24px] font-bold ml-6 mt-6 mr-6'>欢迎使用Yunsoo</Text>
-        {isLogin? (
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
+        <View style={{ height: 200, backgroundColor: '#3d7cff', justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white' }}>Yunsoo</Text>
+        </View>
+        
+        <View style={{ flex: 1, backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, marginTop: -32, padding: 24 }}>
+          <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'black', marginBottom: 24 }}>欢迎使用Yunsoo</Text>
           
-          <View className='mt-6'>
-            <View className='relative h-[44px] w-[360px] mx-auto mb-6'>
+          {isLogin ? (
+            <View>
               <TextInput
                 placeholder='请输入邮箱'
-                className='border border-gray-300 rounded-md p-2 block text-[15px] h-[44px] w-full'
-                focusable
+                style={{ 
+                  borderWidth: 1, 
+                  borderColor: '#d1d5db', 
+                  borderRadius: 6, 
+                  padding: 12, 
+                  fontSize: 15, 
+                  height: 44, 
+                  marginBottom: 16 
+                }}
                 onChangeText={changeWatchEamil}
                 value={email}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="next"
+                editable={true}
+                selectTextOnFocus={true}
               />
-              <AntDesign 
-                name="closecircle" 
-                size={16} 
-                color="#555"
-                style={{
-                  position: 'absolute', 
-                  right: 12, 
-                  top: '50%', 
-                  transform: [{ translateY: -8 }]
-                }}
-              />
-            </View>
-
-            <View className='relative h-[44px] w-[360px] mx-auto mb-6'>
+              
               <TextInput
                 placeholder='请输入密码'
-                className='border border-gray-300 rounded-md p-2 block text-[15px] h-[44px] w-full'
-                focusable
                 secureTextEntry
-              />
-              <AntDesign 
-                name="closecircle" 
-                size={16} 
-                color="#555"
-                style={{
-                  position: 'absolute', 
-                  right: 12, 
-                  top: '50%', 
-                  transform: [{ translateY: -8 }]
+                style={{ 
+                  borderWidth: 1, 
+                  borderColor: '#d1d5db', 
+                  borderRadius: 6, 
+                  padding: 12, 
+                  fontSize: 15, 
+                  height: 44, 
+                  marginBottom: 24
                 }}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="done"
+                editable={true}
+                selectTextOnFocus={true}
               />
-            </View>
 
-            <TouchableOpacity
-              onPress={() => showToast('操作成功！')}
-              className='
-              bg-blue-500 
-              w-[368px] 
-              h-[44px] 
-              flex
-              items-center 
-              justify-center 
-              rounded-[10px]
-              mx-auto'
-            >
-              <Text className='text-white text-[15px] font-bold'>登 录</Text>
-            </TouchableOpacity>
-            
-            <View className='flex flex-row justify-center items-center mt-4'>
-              <Text className='text-[15px] text-gray-500'>没有账号？</Text>
-              <TouchableOpacity onPress={() => {}}>
-                <Text 
-                  className='text-[15px] 
-                  text-blue-500'
-                  onPress={() => setIsLogin(false)}
-                >
-                  立即注册
-                </Text>
+              <TouchableOpacity
+                onPress={() => showToast('操作成功！')}
+                style={{
+                  backgroundColor: '#3b82f6',
+                  height: 44,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 10,
+                  marginBottom: 16
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>登 录</Text>
               </TouchableOpacity>
+              
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#6b7280' }}>没有账号？</Text>
+                <TouchableOpacity onPress={() => setIsLogin(false)}>
+                  <Text style={{ fontSize: 15, color: '#3b82f6', marginLeft: 4 }}>
+                    立即注册
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        ) : (
-          <View>
-            <TextInput
-              placeholder='请输入邮箱'
-              className='border border-gray-300 rounded-md p-2 m-6 block text-[15px] h-[44px]'
-              focusable
-            />
-            
-            <TextInput
-              placeholder='请输入密码'
-              className='border border-gray-300 rounded-md p-2 m-6 block text-[15px] h-[44px] -mt-[3px]'
-              focusable
-              secureTextEntry
-            />
-            <TextInput
-              placeholder='请输入公司名'
-              className='border border-gray-300 rounded-md p-2 m-6 block text-[15px] h-[44px] -mt-[3px]'
-              focusable
-            />
-            <TextInput
-              placeholder='请输入用户名'
-              className='border border-gray-300 rounded-md p-2 m-6 block text-[15px] h-[44px] -mt-[3px]'
-              focusable
-            />
-            <TouchableOpacity
-              onPress={() => {}}
-              className='
-              bg-blue-500 
-              w-[368px] 
-              h-[44px] 
-              flex
-              items-center 
-              justify-center 
-              rounded-[10px]
-              mx-auto'
-            >
-              <Text className='text-white text-[15px] font-bold'>立即注册</Text>
-            </TouchableOpacity>
-            <View className='flex flex-row justify-center items-center mt-4'>
-              <Text className='text-[15px] text-gray-500'>已有账号？</Text>
-              <TouchableOpacity onPress={() => {}}>
-                <Text 
-                  className='text-[15px] 
-                  text-blue-500'
-                  onPress={() => setIsLogin(true)}
-                >
-                  去登录
-                </Text>
+          ) : (
+            <View>
+              <TextInput
+                placeholder='请输入邮箱'
+                style={{ 
+                  borderWidth: 1, 
+                  borderColor: '#d1d5db', 
+                  borderRadius: 6, 
+                  padding: 12, 
+                  fontSize: 15, 
+                  height: 44, 
+                  marginBottom: 16 
+                }}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="next"
+                editable={true}
+                selectTextOnFocus={true}
+              />
+              
+              <TextInput
+                placeholder='请输入密码'
+                secureTextEntry
+                style={{ 
+                  borderWidth: 1, 
+                  borderColor: '#d1d5db', 
+                  borderRadius: 6, 
+                  padding: 12, 
+                  fontSize: 15, 
+                  height: 44, 
+                  marginBottom: 16
+                }}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="next"
+                editable={true}
+                selectTextOnFocus={true}
+              />
+              
+              <TextInput
+                placeholder='请输入公司名'
+                style={{ 
+                  borderWidth: 1, 
+                  borderColor: '#d1d5db', 
+                  borderRadius: 6, 
+                  padding: 12, 
+                  fontSize: 15, 
+                  height: 44, 
+                  marginBottom: 16 
+                }}
+                autoCapitalize="words"
+                autoCorrect={false}
+                returnKeyType="next"
+                editable={true}
+                selectTextOnFocus={true}
+              />
+              
+              <TextInput
+                placeholder='请输入用户名'
+                style={{ 
+                  borderWidth: 1, 
+                  borderColor: '#d1d5db', 
+                  borderRadius: 6, 
+                  padding: 12, 
+                  fontSize: 15, 
+                  height: 44, 
+                  marginBottom: 24 
+                }}
+                autoCapitalize="words"
+                autoCorrect={false}
+                returnKeyType="done"
+                editable={true}
+                selectTextOnFocus={true}
+              />
+
+              <TouchableOpacity
+                onPress={() => showToast('注册成功！')}
+                style={{
+                  backgroundColor: '#3b82f6',
+                  height: 44,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 10,
+                  marginBottom: 16
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>立即注册</Text>
               </TouchableOpacity>
+              
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#6b7280' }}>已有账号？</Text>
+                <TouchableOpacity onPress={() => setIsLogin(true)}>
+                  <Text style={{ fontSize: 15, color: '#3b82f6', marginLeft: 4 }}>
+                    去登录
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-        
-        
-      </View>
-    </>
+          )}
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
