@@ -1,6 +1,8 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import {
   Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -9,7 +11,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
@@ -23,18 +24,27 @@ export default function Home() {
   };
 
   return (
+    
     <KeyboardAvoidingView 
       style={{ flex: 1 }} 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    > 
       <ScrollView style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
-        <View style={{ height: 200, backgroundColor: '#3d7cff', justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white' }}>Yunsoo</Text>
-        </View>
+        <LinearGradient 
+          colors={['#2a6fff', '#3e7dff']} 
+          start={{ x: 0, y: 0 }} 
+          end={{ x: 1, y: 0 }}
+          style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Image 
+            source={require('../assets/images/system_logo_white.png')} 
+            style={{ width: 160 }} 
+            resizeMode="contain"
+          />
+        </LinearGradient>
         
         <View style={{ flex: 1, backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, marginTop: -32, padding: 24 }}>
           <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'black', marginBottom: 24 }}>欢迎使用Yunsoo</Text>
-          
           {isLogin ? (
             <View>
               <TextInput
@@ -50,6 +60,7 @@ export default function Home() {
                 }}
                 onChangeText={changeWatchEamil}
                 value={email}
+                focusable
                 autoCapitalize="none"
                 autoCorrect={false}
                 returnKeyType="next"
