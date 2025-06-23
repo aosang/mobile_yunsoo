@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 export default function HomeScreen() {
   return (
@@ -8,9 +8,4 @@ export default function HomeScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  }
-})
+
