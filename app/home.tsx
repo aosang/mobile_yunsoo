@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -12,8 +12,10 @@ import {
   View
 } from 'react-native';
 import { LoginForm } from '../lib/dbtype';
-
+import { supabase } from '../lib/initSupabase';
+import { getIsLoginSession } from '../lib/pubFunction';
 export default function Home() {
+  const router = useRouter()
   const [isLogin, setIsLogin] = useState(true)
   const [loginForm, setLoginForm] = useState<LoginForm>({
     email: '',
@@ -22,7 +24,7 @@ export default function Home() {
     user_name: ''
   })
 
-  const verifyLoginForm = () => {
+  const verifyLoginForm = async () => {
     if (loginForm.email === '') {
       Alert.alert('请输入邮箱')
       return false
@@ -30,9 +32,28 @@ export default function Home() {
       Alert.alert('请输入密码')
       return false
     }
-    router.replace('/(tabs)')
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: loginForm.email,
+      password: loginForm.password
+    })
+    if (error) {
+      Alert.alert('用户名或密码错误')
+      setLoginForm({ ...loginForm, password: '', email: '' })
+    } else if (data.session) {
+      router.replace('/(tabs)')
+    }
   }
 
+  const checkLoginSession = async () => {
+    const mySession = await getIsLoginSession()
+    if (mySession) {
+      router.replace('/(tabs)')
+    }
+  }
+
+  useEffect(() => {
+    checkLoginSession()
+  }, [])
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -98,7 +119,7 @@ export default function Home() {
             />
 
             <TouchableOpacity
-              onPress={() => verifyLoginForm()}
+              onPress={verifyLoginForm}
               style={{
                 backgroundColor: '#3b82f6',
                 height: 44,
