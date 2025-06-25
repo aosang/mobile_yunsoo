@@ -21,7 +21,7 @@ export default function HomeScreen() {
           colors={['#2a6fff', '#3e7dff']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={{ height: 80, paddingTop: Platform.OS === 'ios' ? 44 : 24 }}
+          style={{ height: 96, paddingTop: 36 }}
         >
           <Text style={{
             fontSize: 18,
