@@ -5,14 +5,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Octicons from '@expo/vector-icons/Octicons';
 
 export default function HomeScreen() {
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1 }} 
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <StatusBar style="light" />
@@ -33,10 +36,10 @@ export default function HomeScreen() {
             Yunsoo云梳
           </Text>
         </LinearGradient>
-        
-        <ScrollView 
-          style={{ flex: 1}}
-          contentContainerStyle={{ paddingBottom: 100 }}
+
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={true}
         >
           <LinearGradient
@@ -281,12 +284,44 @@ export default function HomeScreen() {
 
           {/* 资产设备 */}
           <View style={{
-            width: 380,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
             alignSelf: 'center',
+            width: 380,
             marginTop: 20,
-            marginBottom: 50,
+            marginBottom: 20,
           }}>
-            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#000', textAlign: 'left', marginBottom: 6, }}>资产统计</Text>
+            <Text style={{
+              fontSize: 16,
+              fontWeight: 'bold',
+              color: '#000',
+              marginBottom: 15,
+              alignSelf: 'flex-start'
+            }}>
+              资产统计
+            </Text>
+
+            <View style={{
+              backgroundColor: '#2a6fff',
+              width: 380,
+              height: 80,
+              borderRadius: 10,
+              marginBottom: 12,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <View style={{ width: '50%', borderRightWidth: 1, borderRightColor: 'white'}}>
+                <Text style={{ fontSize: 14, color: 'white', textAlign: 'center'}}>资产总计</Text>
+                <Text style={{ fontSize: 18, color: 'white', textAlign: 'center', fontWeight: 'bold'}}>CNY100000</Text>
+              </View>
+              <View style={{ width: '48%' }}>
+                <Text style={{ fontSize: 14, color: 'white', textAlign: 'center'}}>资产总数</Text>
+                <Text style={{ fontSize: 18, color: 'white', textAlign: 'center', fontWeight: 'bold'}}>1600</Text>
+              </View>
+            </View>
             <View style={{
               display: 'flex',
               flexDirection: 'row',
@@ -294,16 +329,186 @@ export default function HomeScreen() {
               flexWrap: 'wrap',
               width: 380,
             }}>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>电脑: 2</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>笔记本: 20</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>服务器: 20</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>交换机: 20</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>打印机: 20</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>路由器: 20</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>手机: 20</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>键盘/鼠标: 20</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>显示器: 20</Text>
-              <Text style={{ width: '25%', fontSize: 14, color: '#333', marginBottom: 15}}>其他: 20</Text>
+              <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '100%',
+                boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
+                alignItems: 'center',
+                borderRadius: 5,
+                paddingLeft: 12,
+                paddingRight: 12,
+                height: 60,
+                justifyContent: 'space-between',
+              }}>
+                <View style={{
+                  width: '32.33%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <MaterialIcons
+                    name="computer"
+                    size={20}
+                    color="#333"
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text style={{ fontSize: 14, color: '#333' }}>电脑: 2</Text>
+                </View>
+                <View style={{
+                  width: '32.33%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <Entypo 
+                    name="laptop" 
+                    size={20} 
+                    color="black" 
+                    style={{ marginRight: 4, color: '#333' }}
+                  />
+                  <Text style={{ fontSize: 14, color: '#333' }}>笔记本: 20</Text>
+                </View>
+                <View style={{
+                  width: '32.33%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <FontAwesome name="server" size={20} color="#333" style={{ marginRight: 4 }} />
+                  <Text style={{ fontSize: 14, color: '#333' }}>服务器: 20</Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              width: 380,
+            }}>
+              <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '100%',
+                boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
+                alignItems: 'center',
+                borderRadius: 5,
+                paddingLeft: 12,
+                paddingRight: 12,
+                height: 60,
+                justifyContent: 'space-between',
+                marginBottom: 12,
+              }}>
+                <View style={{
+                  width: '32.33%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <Octicons 
+                    name="arrow-switch" 
+                    size={20} 
+                    color="#333" 
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text style={{ fontSize: 14, color: '#333' }}>交换机: 2</Text>
+                </View>
+                <View style={{
+                  width: '32.33%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <AntDesign 
+                    name="printer"
+                    size={24} 
+                    color="#333" 
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text style={{ fontSize: 14, color: '#333' }}>打印机: 20</Text>
+                </View>
+                <View style={{
+                  width: '32.33%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <Entypo name="network" size={20} color="#333" style={{ marginRight: 4 }} />
+                  <Text style={{ fontSize: 14, color: '#333' }}>路由器: 20</Text>
+                </View>
+              </View>
+
+              <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                width: 380,
+              }}>
+                <View style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  width: '100%',
+                  boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
+                  alignItems: 'center',
+                  borderRadius: 5,
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  height: 60,
+                  justifyContent: 'space-between',
+                  marginBottom: 12,
+                }}>
+                  <View style={{
+                    width: '32.33%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                    <FontAwesome5 name="mobile-alt" size={24} color="#333" style={{ marginRight: 4 }} />
+                    <Text style={{ fontSize: 14, color: '#333' }}>手机: 2</Text>
+                  </View>
+                  <View style={{
+                    width: '32.33%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                    <MaterialIcons name="monitor" size={24} color="#333" style={{ marginRight: 4 }} />
+                    <Text style={{ fontSize: 14, color: '#333' }}>显示器: 20</Text>
+                  </View>
+                  <View style={{
+                    width: '32.33%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                    <MaterialIcons name="keyboard" size={24} color="#333" style={{ marginRight: 4 }} />
+                    <Text style={{ fontSize: 14, color: '#333' }}>键盘/鼠标: 20</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                width: 380,
+              }}>
+                <View style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  width: '100%',
+                  boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
+                  alignItems: 'center',
+                  borderRadius: 5,
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  height: 60,
+                  justifyContent: 'space-between',
+                }}>
+                  <View style={{
+                    width: '32.33%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                    <MaterialIcons name="devices-other" size={24} color="#333" style={{ marginRight: 4 }} />
+                    <Text style={{ fontSize: 14, color: '#333' }}>其他: 2</Text>
+                  </View>
+                </View>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -311,5 +516,3 @@ export default function HomeScreen() {
     </KeyboardAvoidingView>
   )
 }
-
-
