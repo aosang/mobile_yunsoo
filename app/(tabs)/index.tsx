@@ -39,7 +39,7 @@ export default function HomeScreen() {
 
         <ScrollView
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? 50 : 20 }}
           showsVerticalScrollIndicator={true}
         >
           <LinearGradient
