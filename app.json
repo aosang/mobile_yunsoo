@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "mobile_yusoo",
+    "name": "云梳",
     "slug": "mobile_yusoo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/yunsoo_icon.png",
     "scheme": "mobileyusoo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

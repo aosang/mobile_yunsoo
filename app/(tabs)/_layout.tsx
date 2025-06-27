@@ -8,6 +8,7 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -30,6 +31,13 @@ export default function TabLayout() {
         options={{
           title: '首页',
           tabBarIcon: ({ color }) => <Entypo size={28} color={color} name="home" />,
+        }}
+      />
+      <Tabs.Screen
+        name="workorder"
+        options={{
+          title: '工单',
+          tabBarIcon: ({ color }) => <FontAwesome6 name="clipboard-list" color={color} size={28} />,
         }}
       />
       <Tabs.Screen

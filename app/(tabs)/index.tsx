@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -13,6 +14,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 
 export default function HomeScreen() {
+  const router = useRouter();
+  
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -24,7 +27,14 @@ export default function HomeScreen() {
           colors={['#2a6fff', '#3e7dff']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={{ height: 96, paddingTop: 36 }}
+          style={{ 
+            height: 96, 
+            paddingTop: 36,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
         >
           <Text style={{
             fontSize: 18,
@@ -35,6 +45,7 @@ export default function HomeScreen() {
           }}>
             Yunsoo云梳
           </Text>
+          <Text style={{marginTop: 24, marginRight: 16, color: 'white', fontSize: 14}}>Xiaole2071</Text>
         </LinearGradient>
 
         <ScrollView
@@ -84,7 +95,7 @@ export default function HomeScreen() {
             alignSelf: 'center',
             marginTop: 18,
           }}>
-            <View>
+            <TouchableOpacity onPress={() => router.push('/views/orderdetails')}>
               <LinearGradient
                 colors={['#07b0f8', '#43d7fd']}
                 start={{ x: 0, y: 0 }}
@@ -102,9 +113,17 @@ export default function HomeScreen() {
                   style={{ textAlign: 'center', lineHeight: 64 }}
                 />
               </LinearGradient>
-              <Text style={{ fontSize: 14, color: '#333', textAlign: 'center' }}>库存管理</Text>
-            </View>
-            <View>
+              <Text
+                style={{ 
+                  fontSize: 14, 
+                  color: '#333', 
+                  textAlign: 'center' 
+                }}>
+                  库存管理
+                </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
               <LinearGradient
                 colors={['#8e69fc', '#a98df3']}
                 start={{ x: 0, y: 0 }}
@@ -123,8 +142,9 @@ export default function HomeScreen() {
                 />
               </LinearGradient>
               <Text style={{ fontSize: 14, color: '#333', textAlign: 'center' }}>巡检记录</Text>
-            </View>
-            <View>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
               <LinearGradient
                 colors={['#f9b31a', '#ffe12e']}
                 start={{ x: 0, y: 0 }}
@@ -143,9 +163,9 @@ export default function HomeScreen() {
                 />
               </LinearGradient>
               <Text style={{ fontSize: 14, color: '#333', textAlign: 'center' }}>知识库</Text>
-            </View>
+            </TouchableOpacity>
 
-            <View>
+            <TouchableOpacity>
               <LinearGradient
                 colors={['#fe8312', '#ffb302']}
                 start={{ x: 0, y: 0 }}
@@ -164,7 +184,7 @@ export default function HomeScreen() {
                 />
               </LinearGradient>
               <Text style={{ fontSize: 14, color: '#333', textAlign: 'center' }}>人员管理</Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           {/* 统计 */}
@@ -202,7 +222,7 @@ export default function HomeScreen() {
                 }}>
                   <Entypo name="pie-chart" size={40} color="white" style={{ opacity: 0.8, marginRight: 12 }} />
                   <View style={{ display: 'flex' }}>
-                    <Text style={{ fontSize: 20, color: 'white' }}>123</Text>
+                    <Text style={{ fontSize: 18, color: 'white' }}>123</Text>
                     <Text style={{ fontSize: 14, color: 'white' }}>总计数量</Text>
                   </View>
                 </View>
@@ -226,7 +246,7 @@ export default function HomeScreen() {
                 }}>
                   <AntDesign name="checkcircle" size={40} color="white" style={{ opacity: 0.8, marginRight: 12 }} />
                   <View style={{ display: 'flex' }}>
-                    <Text style={{ fontSize: 20, color: 'white' }}>123</Text>
+                    <Text style={{ fontSize: 18, color: 'white' }}>123</Text>
                     <Text style={{ fontSize: 14, color: 'white' }}>已完成</Text>
                   </View>
                 </View>
@@ -250,7 +270,7 @@ export default function HomeScreen() {
                 }}>
                   <Ionicons name="reload-circle" size={50} color="white" style={{ opacity: 0.8, marginRight: 12 }} />
                   <View style={{ display: 'flex' }}>
-                    <Text style={{ fontSize: 20, color: 'white' }}>123</Text>
+                    <Text style={{ fontSize: 18, color: 'white' }}>123</Text>
                     <Text style={{ fontSize: 14, color: 'white' }}>未完成</Text>
                   </View>
                 </View>
@@ -274,7 +294,7 @@ export default function HomeScreen() {
                 }}>
                   <AntDesign name="pausecircle" size={40} color="white" style={{ opacity: 0.8, marginRight: 12 }} />
                   <View style={{ display: 'flex' }}>
-                    <Text style={{ fontSize: 20, color: 'white' }}>123</Text>
+                    <Text style={{ fontSize: 18, color: 'white' }}>123</Text>
                     <Text style={{ fontSize: 14, color: 'white' }}>未完成</Text>
                   </View>
                 </View>
