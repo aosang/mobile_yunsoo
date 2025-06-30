@@ -1,83 +1,256 @@
-import { useState } from 'react';
-import { Text, View, useWindowDimensions } from "react-native";
+import { WorkOrderProps } from '@/lib/dbtype';
+import { getWorkOrderData } from '@/lib/pubFunction';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, FlatList, Text, View, useWindowDimensions } from "react-native";
+import { GestureHandlerRootView, RectButton, Swipeable } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+import { TabBar, TabView } from 'react-native-tab-view';
 
-const FirstRoute = () => {
-  return (
-    <View style={{ backgroundColor: '#2a6fff' }}>
-      <Text style={{ color: '#fff' }}>这是 Tab 1</Text>
-    </View>
-  )
-}
+const RightActions = () => (
+  <RectButton
+    style={{
+      backgroundColor: '#ff4d4f',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 60,
+      height: 130
+    }}
+    onPress={() => Alert.alert(
+      "确认删除",
+      "是否确认删除该工单？",
+      [{
+        text: "取消",
+        style: "cancel"
+      }, {
+        text: "确认",
+        style: "destructive",
+        onPress: () => {
+          console.log("执行删除操作");
+        }
+      }]
+    )}
+  >
+    <Text style={{ color: 'white' }}>删除</Text>
+  </RectButton>
+);
 
-const SecondRoute = () => (
-  <View style={{ backgroundColor: '#3e7dff' }}>
-    <Text style={{ color: '#fff' }}>这是 Tab 2</Text>
-  </View>
-)
-
-const ThirdRoute = () => (
-  <View style={{ backgroundColor: '#3e7dff' }}>
-    <Text style={{ color: '#fff' }}>这是 Tab 3</Text>
-  </View>
-)
-
-const FouthRoute = () => (
-  <View style={{ backgroundColor: '#3e7dff' }}>
-    <Text style={{ color: '#fff' }}>这是 Tab 4</Text>
-  </View>
-)
 
 
 export default function WorkOrder() {
+  const WorkOrderRoute = ({ status }: { status: string }) => {
+    const swipeableRefs = useRef<Array<Swipeable | null>>([])
+
+
+    const closeOtherRows = (index: number) => {
+      requestAnimationFrame(() => {
+        swipeableRefs.current.forEach((ref, i) => {
+          if (i !== index && ref) {
+            ref.close()
+          }
+        })
+      })
+    }
+
+    // 根据status筛选工单
+    const filteredOrders = status === '全部' ? workOrderData : workOrderData.filter(order => {
+      switch (status) {
+        case '已完成':
+          return order.created_status === '已完成';
+        case '待处理':
+          return order.created_status === '待处理';
+        case '处理中':
+          return order.created_status === '处理中';
+        default:
+          return true;
+      }
+    });
+
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {workOrderData.length > 0 && filteredOrders.length > 0? (
+          <FlatList
+            style={{ marginTop: 12, display: 'flex', flexDirection: 'column', alignSelf: 'center' }}
+            data={filteredOrders}
+            renderItem={({ item }) => (
+              <Swipeable
+                key={item.created_id}
+                ref={ref => {
+                  swipeableRefs.current[index] = ref;
+                }}
+                renderRightActions={RightActions}
+                onSwipeableOpen={() => closeOtherRows(index)}
+              >
+                <View style={{
+                  width: 380,
+                  height: 130,
+                  backgroundColor: 'white',
+                  boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
+                  padding: 12,
+                  position: 'relative',
+                  marginBottom: 12
+                }}>
+                  <Text style={{ marginBottom: 8 }}>设备名称：{item.created_product}</Text>
+                  <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <Text style={{ marginRight: 12 }}>设备类型：{item.created_type}</Text>
+                    <Text>设备品牌：{item.created_brand}</Text>
+                  </View>
+                  <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <Text style={{ marginRight: 12 }}>创建人：{item.created_name}</Text>
+                    <Text>更新时间：{item.created_update}</Text>
+                  </View>
+                  <Text
+                    numberOfLines={1}
+                    style={{ marginBottom: 8, width: 350 }}>
+                    问题描述：{item.created_text}
+                  </Text>
+                  <View style={{
+                    position: 'absolute',
+                    top: 10,
+                    right: 12,
+                    backgroundColor: {
+                      '已完成': '#f6ffed',
+                      '待处理': '#fff7e6',
+                      '处理中': '#fff1f0'
+                    }[item.created_status],
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    paddingTop: 2,
+                    paddingBottom: 2,
+                    borderRadius: 4,
+                    borderWidth: 1,
+                    borderColor: {
+                      '已完成': '#389e0d',
+                      '待处理': '#d46b08',
+                      '处理中': '#dd394a'
+                    }[item.created_status]
+                  }}>
+                    {item.created_status === '已完成' && <Text style={{ color: '#389e0d' }}>{item.created_status}</Text>}
+                    {item.created_status === '待处理' && <Text style={{ color: '#d46b08' }}>{item.created_status}</Text>}
+                    {item.created_status === '处理中' && <Text style={{ color: '#dd394a' }}>{item.created_status}</Text>}
+                  </View>
+                </View>
+              </Swipeable>
+            )}
+          />
+        ) : (
+          <View style={{ marginTop: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+            <FontAwesome name="file-text-o" size={40} color="#555" />
+            <Text style={{ fontSize: 14, color: '#555', marginTop: 6 }}>暂无工单</Text>
+          </View>
+        )}
+      </GestureHandlerRootView>
+    )
+  }
+
   const layout = useWindowDimensions();
+  const [workOrderData, setWorkOrderData] = useState<WorkOrderProps[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [workOrderForm, setWorkOrderForm] = useState<WorkOrderProps>({
+    created_update: '',
+    created_id: '',
+    created_time: '',
+    created_product: '',
+    created_name: '',
+    created_solved: '',
+    created_type: '',
+    created_brand: '',
+    created_status: '',
+    created_remark: '',
+    created_text: ''
+  })
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: 'first', title: '全部' },
     { key: 'second', title: '已完成' },
-    { key: 'three', title: '未完成' },
-    { key: 'four', title: '暂停中' },
-  ]);
+    { key: 'three', title: '待处理' },
+    { key: 'four', title: '处理中' },
+  ])
 
-  const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-    three: ThirdRoute,
-    four: FouthRoute
-  });
+  const renderScene = ({ route }: { route: { title: string } }) => {
+    return <WorkOrderRoute status={route.title} />;
+  };
+
+  const changeIndex = (index: number) => {
+    setIndex(index)
+    // fetchWorkOrderData(index)
+  }
+
+  const fetchWorkOrderData = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const data = await getWorkOrderData()
+      if (data) {
+        setWorkOrderData(data)
+      } else {
+        setError('获取数据失败，请重试')
+      }
+    } catch (err) {
+      setError('系统异常，请稍后重试')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchWorkOrderData()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>加载中...</Text>
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: '#ff4d4f' }}>{error}</Text>
+        <Text 
+          style={{ marginTop: 10, color: '#2a6fff' }}
+          onPress={fetchWorkOrderData}
+        >
+          点击重试
+        </Text>
+      </View>
+    )
+  }
 
   return (
-    <SafeAreaView 
-      style={{ flex: 1}} 
-      edges={['bottom', 'left', 'right']}
-    >
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView
+        style={{ flex: 1 }}
+        edges={['bottom', 'left', 'right']}
+      >
         <TabView
           navigationState={{ index, routes }}
           renderScene={renderScene}
-          onIndexChange={setIndex}
+          onIndexChange={changeIndex}
           initialLayout={{ width: layout.width }}
-          renderTabBar={ (props: any) =>
-            
-            <TabBar 
-              {...props} 
-              style={{backgroundColor: '#2a6fff', paddingTop: 50}}
-              indicatorStyle={{backgroundColor: '#fff'}}
+          renderTabBar={(props: any) =>
+            <TabBar
+              {...props}
+              style={{ backgroundColor: '#2a6fff', paddingTop: 50 }}
+              indicatorStyle={{ backgroundColor: '#fff' }}
               renderLabel={({ route, focused }: { route: { title: string }, focused: boolean }) => (
-                <View> 
+                <View>
                   <Text style={{
                     fontSize: 15,
-                    color: focused? '#fff' : 'rgba(255,255,255,0.6)',
+                    color: focused ? '#fff' : 'rgba(255,255,255,0.6)',
                     fontWeight: focused ? 'bold' : 'normal',
                   }}>
                     {route.title}
                   </Text>
                 </View>
               )}
-          />}
-          
+            />}
         />
-    </SafeAreaView>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   )
 }

@@ -30,21 +30,21 @@ export default function TabLayout() {
         name="index"
         options={{
           title: '首页',
-          tabBarIcon: ({ color }) => <Entypo size={28} color={color} name="home" />,
+          tabBarIcon: ({ color }) => <Entypo size={24} color={color} name="home" />,
         }}
       />
       <Tabs.Screen
         name="workorder"
         options={{
           title: '工单',
-          tabBarIcon: ({ color }) => <FontAwesome6 name="clipboard-list" color={color} size={28} />,
+          tabBarIcon: ({ color }) => <FontAwesome6 name="clipboard-list" color={color} size={24} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: '我的',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} color={color} name="user" />,
+          tabBarIcon: ({ color }) => <FontAwesome size={24} color={color} name="user" />,
         }}
       />
     </Tabs>
