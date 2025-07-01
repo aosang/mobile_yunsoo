@@ -37,7 +37,7 @@ export default function Home() {
       password: loginForm.password
     })
     if (error) {
-      Alert.alert('用户名或密码错误')
+      Alert.alert(error.message)
       setLoginForm({ ...loginForm, password: '', email: '' })
     } else if (data.session) {
       router.replace('/(tabs)')

@@ -1,8 +1,9 @@
 import { WorkOrderProps } from '@/lib/dbtype';
-import { getWorkOrderData } from '@/lib/pubFunction';
+import { getUserInfo, getWorkOrderData } from '@/lib/pubFunction';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, FlatList, Text, View, useWindowDimensions } from "react-native";
+import { Alert, FlatList, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView, RectButton, Swipeable } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
@@ -35,13 +36,10 @@ const RightActions = () => (
   </RectButton>
 );
 
-
-
 export default function WorkOrder() {
   const WorkOrderRoute = ({ status }: { status: string }) => {
     const swipeableRefs = useRef<Array<Swipeable | null>>([])
-
-
+    
     const closeOtherRows = (index: number) => {
       requestAnimationFrame(() => {
         swipeableRefs.current.forEach((ref, i) => {
@@ -70,25 +68,29 @@ export default function WorkOrder() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         {workOrderData.length > 0 && filteredOrders.length > 0? (
           <FlatList
-            style={{ marginTop: 12, display: 'flex', flexDirection: 'column', alignSelf: 'center' }}
+            style={{ marginTop: 20, display: 'flex', flexDirection: 'column', alignSelf: 'center' }}
             data={filteredOrders}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <Swipeable
                 key={item.created_id}
                 ref={ref => {
-                  swipeableRefs.current[index] = ref;
+                  if (ref) {
+                    swipeableRefs.current[index] = ref;
+                  }
                 }}
                 renderRightActions={RightActions}
                 onSwipeableOpen={() => closeOtherRows(index)}
               >
-                <View style={{
-                  width: 380,
-                  height: 130,
-                  backgroundColor: 'white',
-                  boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
-                  padding: 12,
-                  position: 'relative',
-                  marginBottom: 12
+                <TouchableOpacity
+                  onPress={() => goToWorkOrderDetail(item.created_id)}
+                  style={{
+                    width: 380,
+                    height: 130,
+                    backgroundColor: 'white',
+                    boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
+                    padding: 12,
+                    position: 'relative',
+                    marginBottom: 12
                 }}>
                   <Text style={{ marginBottom: 8 }}>设备名称：{item.created_product}</Text>
                   <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
@@ -129,7 +131,7 @@ export default function WorkOrder() {
                     {item.created_status === '待处理' && <Text style={{ color: '#d46b08' }}>{item.created_status}</Text>}
                     {item.created_status === '处理中' && <Text style={{ color: '#dd394a' }}>{item.created_status}</Text>}
                   </View>
-                </View>
+                </TouchableOpacity>
               </Swipeable>
             )}
           />
@@ -147,19 +149,7 @@ export default function WorkOrder() {
   const [workOrderData, setWorkOrderData] = useState<WorkOrderProps[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [workOrderForm, setWorkOrderForm] = useState<WorkOrderProps>({
-    created_update: '',
-    created_id: '',
-    created_time: '',
-    created_product: '',
-    created_name: '',
-    created_solved: '',
-    created_type: '',
-    created_brand: '',
-    created_status: '',
-    created_remark: '',
-    created_text: ''
-  })
+  const router = useRouter()
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -175,14 +165,14 @@ export default function WorkOrder() {
 
   const changeIndex = (index: number) => {
     setIndex(index)
-    // fetchWorkOrderData(index)
   }
 
   const fetchWorkOrderData = async () => {
+    const userInfo = await getUserInfo()
     try {
       setIsLoading(true)
       setError(null)
-      const data = await getWorkOrderData()
+      const data = await getWorkOrderData(userInfo.id as string, 3)
       if (data) {
         setWorkOrderData(data)
       } else {
@@ -193,6 +183,13 @@ export default function WorkOrder() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const goToWorkOrderDetail = (id: string) => {
+    router.push({
+      pathname: '/views/orderdetails',
+      params: { id }
+    })
   }
 
   useEffect(() => {
@@ -250,6 +247,7 @@ export default function WorkOrder() {
               )}
             />}
         />
+        
       </SafeAreaView>
     </GestureHandlerRootView>
   )

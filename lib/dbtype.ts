@@ -18,3 +18,11 @@ export type WorkOrderProps = {
   created_remark: string,
   created_text: string
 }
+
+export type UserInfoProps = {
+  id: string,
+  username: string,
+  company: string,
+  email: string,
+  time: string
+}

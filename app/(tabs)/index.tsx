@@ -95,7 +95,7 @@ export default function HomeScreen() {
             alignSelf: 'center',
             marginTop: 18,
           }}>
-            <TouchableOpacity onPress={() => router.push('/views/orderdetails')}>
+            <TouchableOpacity>
               <LinearGradient
                 colors={['#07b0f8', '#43d7fd']}
                 start={{ x: 0, y: 0 }}

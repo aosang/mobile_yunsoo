@@ -1,19 +1,40 @@
+import { UserInfoProps } from '@/lib/dbtype';
 import { supabase } from '@/lib/initSupabase';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { getProfiles, getSession } from '@/lib/pubFunction';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import dayjs from 'dayjs';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Profile() {
   const router = useRouter()
-  
+  const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const getSignOut = async () => {
     await supabase.auth.signOut()
     router.replace('/home')
   }
+
+  const getMyProfileInfo = async () => {
+    const sessionInfo = await getSession()
+    const profileInfo = await getProfiles(sessionInfo?.user.id as string)
+    setAvatarUrl(profileInfo[0]?.avatar_url)
+    let formData = {
+      email: sessionInfo?.user.email,
+      company: sessionInfo?.user.user_metadata.company,
+      username: sessionInfo?.user.user_metadata.username,
+      time: dayjs(profileInfo[0]?.created_at).format('YYYY-MM-DD HH:mm:ss')
+    }
+    setUserInfo(formData as UserInfoProps)
+  }
+
+  useEffect(() => {
+    getMyProfileInfo()
+  }, [])
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -33,13 +54,12 @@ export default function Profile() {
             alignItems: 'center' 
           }}>
             <Image 
-              source={{ uri: 'https://www.wangle.run/company_icon/public_image/pub_avatar.jpg' }} 
+              source={{ uri: avatarUrl || 'https://www.wangle.run/company_icon/public_image/pub_avatar.jpg' }} 
               style={{ width: 70, height: 70, borderRadius: 100, marginTop: 40 }} 
             />
-            <Text style={{ color: 'white', fontSize: 18, marginTop: 10 }}>MilesWang</Text>
+            <Text style={{ color: 'white', fontSize: 18, marginTop: 10 }}>{userInfo?.username}</Text>
           </View>
           
-          {/* <Button title="退出登录" onPress={getSignOut} /> */}
         </LinearGradient>
         <View style={{
           width: 380, 
@@ -66,28 +86,9 @@ export default function Profile() {
               <MaterialIcons name="email" size={18} color="#333" style={{ marginRight: 4 }} />  
               <Text style={{ color: '#333', fontSize: 14 }}>注册邮箱</Text>
             </View>
-            <Text style={{ color: '#333', fontSize: 14 }}>mileswang@gmail.com</Text>
+            <Text style={{ color: '#333', fontSize: 14 }}>{userInfo?.email}</Text>
           </View>
 
-          <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            height: 52,
-            borderBottomWidth: 1,
-            borderBottomColor: '#eee'
-          }}>
-            <View style={{ 
-              display: 'flex', 
-              flexDirection: 'row', 
-              alignItems: 'center' 
-            }}>
-              <FontAwesome5 name="user-alt" size={18} color="#333" style={{ marginRight: 4 }} />  
-              <Text style={{ color: '#333', fontSize: 14 }}>用户名</Text>
-            </View>
-            <Text style={{ color: '#333', fontSize: 14 }}>MilesWang</Text>
-          </View>
 
           <View style={{
             display: 'flex',
@@ -106,7 +107,27 @@ export default function Profile() {
               <MaterialIcons name="info" size={18} color="#333" style={{ marginRight: 4 }} />  
               <Text style={{ color: '#333', fontSize: 14 }}>公司名</Text>
             </View>
-            <Text style={{ color: '#333', fontSize: 14 }}>AACBBC</Text>
+            <Text style={{ color: '#333', fontSize: 14 }}>{userInfo?.company}</Text>
+          </View>
+
+          <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: 52,
+            borderBottomWidth: 1,
+            borderBottomColor: '#eee'
+          }}>
+            <View style={{ 
+              display: 'flex', 
+              flexDirection: 'row', 
+              alignItems: 'center' 
+            }}>
+              <MaterialIcons name="info" size={18} color="#333" style={{ marginRight: 4 }} />  
+              <Text style={{ color: '#333', fontSize: 14 }}>注册时间</Text>
+            </View>
+            <Text style={{ color: '#333', fontSize: 14 }}>{userInfo?.time}</Text>
           </View>
 
           <View style={{ marginTop: 30 }}>
@@ -122,7 +143,7 @@ export default function Profile() {
               >
                 <Text style={{color: '#fff', fontSize: 15, textAlign: 'center'}}>退出登录</Text>
               </LinearGradient>
-          </TouchableOpacity>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
