@@ -1,13 +1,13 @@
 import { WorkOrderProps } from '@/lib/dbtype';
 import { getUserInfo, getWorkOrderData } from '@/lib/pubFunction';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, FlatList, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView, RectButton, Swipeable } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
-
 const RightActions = () => (
   <RectButton
     style={{
@@ -92,19 +92,19 @@ export default function WorkOrder() {
                     position: 'relative',
                     marginBottom: 12
                 }}>
-                  <Text style={{ marginBottom: 8 }}>设备名称：{item.created_product}</Text>
+                  <Text style={{ marginBottom: 8, fontWeight: 'bold', color: '#222' }}>设备名称：<Text style={{color: '#333', fontWeight: 'normal' }}>{item.created_product}</Text></Text>
                   <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                    <Text style={{ marginRight: 12 }}>设备类型：{item.created_type}</Text>
-                    <Text>设备品牌：{item.created_brand}</Text>
+                    <Text style={{ marginRight: 12, fontWeight: 'bold', color: '#222' }}>设备类型：<Text style={{color: '#333', fontWeight: 'normal' }}>{item.created_type}</Text></Text>
+                    <Text style={{ fontWeight: 'bold', color: '#222' }}>设备品牌：<Text style={{color: '#333', fontWeight: 'normal' }}>{item.created_brand}</Text></Text>
                   </View>
                   <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                    <Text style={{ marginRight: 12 }}>创建人：{item.created_name}</Text>
-                    <Text>更新时间：{item.created_update}</Text>
+                    <Text style={{ marginRight: 12, fontWeight: 'bold', color: '#222' }}>创建人：<Text style={{color: '#333', fontWeight: 'normal' }}>{item.created_name}</Text></Text>
+                    <Text style={{ fontWeight: 'bold', color: '#222' }}>更新时间：<Text style={{color: '#333', fontWeight: 'normal' }}>{item.created_update}</Text></Text>
                   </View>
                   <Text
                     numberOfLines={1}
-                    style={{ marginBottom: 8, width: 350 }}>
-                    问题描述：{item.created_text}
+                    style={{ marginBottom: 8, width: 350, fontWeight: 'bold', color: '#222' }}>
+                    问题描述：<Text style={{color: '#333', fontWeight: 'normal' }}>{item.created_text}</Text>
                   </Text>
                   <View style={{
                     position: 'absolute',
@@ -247,8 +247,28 @@ export default function WorkOrder() {
               )}
             />}
         />
-        
       </SafeAreaView>
+      <TouchableOpacity style={{
+        width: 56,
+        height: 56,
+        backgroundColor: '#2a6fff',
+        position: 'absolute',
+        bottom: 20,
+        right: 15,
+        borderRadius: 30,
+        zIndex: 10,
+        boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)'
+      }}>
+        <Ionicons 
+          name="add" 
+          size={34} 
+          color="white" 
+          style={{ 
+            textAlign: 'center', 
+            lineHeight: 56, 
+            fontWeight: 'bold',
+          }} />
+      </TouchableOpacity>
     </GestureHandlerRootView>
   )
 }

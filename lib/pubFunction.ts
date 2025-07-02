@@ -54,9 +54,9 @@ export const getWorkOrderData = async (id?: string, retryCount = 3): Promise<Wor
       .from('work_order_cn')
       .select('*')
       .order('created_time', { ascending: false })
-      .match({ id: id })
+      .match({ id: id  })
     if (error) {
-      if (error.message === 'JWT expired') {
+      if (error.message === 'JWTpired') {
         // 如果token过期，先尝试刷新会话
         const { data: session } = await supabase.auth.refreshSession()
         if (session) {

@@ -37,7 +37,7 @@ export default function Home() {
       password: loginForm.password
     })
     if (error) {
-      Alert.alert(error.message)
+      // Alert.alert(error.message)
       setLoginForm({ ...loginForm, password: '', email: '' })
     } else if (data.session) {
       router.replace('/(tabs)')
