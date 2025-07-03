@@ -53,8 +53,8 @@ export default function WorkOrder() {
     // 根据status筛选工单
     const filteredOrders = status === '全部' ? workOrderData : workOrderData.filter(order => {
       switch (status) {
-        case '已完成':
-          return order.created_status === '已完成';
+        case '已解决':
+          return order.created_status === '已解决';
         case '待处理':
           return order.created_status === '待处理';
         case '处理中':
@@ -68,6 +68,8 @@ export default function WorkOrder() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         {workOrderData.length > 0 && filteredOrders.length > 0? (
           <FlatList
+            onRefresh={fetchWorkOrderData}
+            refreshing={isLoading}
             style={{ marginTop: 20, display: 'flex', flexDirection: 'column', alignSelf: 'center' }}
             data={filteredOrders}
             renderItem={({ item, index }) => (
@@ -111,7 +113,7 @@ export default function WorkOrder() {
                     top: 10,
                     right: 12,
                     backgroundColor: {
-                      '已完成': '#f6ffed',
+                      '已解决': '#f6ffed',
                       '待处理': '#fff7e6',
                       '处理中': '#fff1f0'
                     }[item.created_status],
@@ -122,12 +124,12 @@ export default function WorkOrder() {
                     borderRadius: 4,
                     borderWidth: 1,
                     borderColor: {
-                      '已完成': '#389e0d',
+                      '已解决': '#389e0d',
                       '待处理': '#d46b08',
                       '处理中': '#dd394a'
                     }[item.created_status]
                   }}>
-                    {item.created_status === '已完成' && <Text style={{ color: '#389e0d' }}>{item.created_status}</Text>}
+                    {item.created_status === '已解决' && <Text style={{ color: '#389e0d' }}>{item.created_status}</Text>}
                     {item.created_status === '待处理' && <Text style={{ color: '#d46b08' }}>{item.created_status}</Text>}
                     {item.created_status === '处理中' && <Text style={{ color: '#dd394a' }}>{item.created_status}</Text>}
                   </View>
@@ -154,7 +156,7 @@ export default function WorkOrder() {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: 'first', title: '全部' },
-    { key: 'second', title: '已完成' },
+    { key: 'second', title: '已解决' },
     { key: 'three', title: '待处理' },
     { key: 'four', title: '处理中' },
   ])
@@ -172,7 +174,7 @@ export default function WorkOrder() {
     try {
       setIsLoading(true)
       setError(null)
-      const data = await getWorkOrderData(userInfo.id as string, 3)
+      const data = await getWorkOrderData(userInfo.id as string)
       if (data) {
         setWorkOrderData(data)
       } else {
@@ -248,12 +250,13 @@ export default function WorkOrder() {
             />}
         />
       </SafeAreaView>
+      
       <TouchableOpacity style={{
-        width: 56,
-        height: 56,
+        width: 52,
+        height: 52,
         backgroundColor: '#2a6fff',
         position: 'absolute',
-        bottom: 20,
+        bottom: 60,
         right: 15,
         borderRadius: 30,
         zIndex: 10,
@@ -261,11 +264,11 @@ export default function WorkOrder() {
       }}>
         <Ionicons 
           name="add" 
-          size={34} 
+          size={28} 
           color="white" 
           style={{ 
             textAlign: 'center', 
-            lineHeight: 56, 
+            lineHeight: 52, 
             fontWeight: 'bold',
           }} />
       </TouchableOpacity>

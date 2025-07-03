@@ -1,4 +1,3 @@
-import { WorkOrderProps } from './dbtype'
 import { supabase } from './initSupabase'
 
 export const getIsLoginSession = async () => {
@@ -43,60 +42,29 @@ export const getProfiles = async (id: string) => {
   return data
 }
 
-export const getWorkOrderData = async (id?: string, retryCount = 3): Promise<WorkOrderProps[] | null> => {
-  try {
-    // 检查会话状态
-    const session = await getIsLoginSession()
-    if (!session) {
-      throw new Error('登录已过期，请重新登录')
-    }
+// 获取工单数据
+export const getWorkOrderData = async (id?: string, cId?: string) => {
+  if (cId) {
     const { data, error } = await supabase
       .from('work_order_cn')
       .select('*')
       .order('created_time', { ascending: false })
-      .match({ id: id  })
+      .match({ created_id: cId })
     if (error) {
-      if (error.message === 'JWTpired') {
-        // 如果token过期，先尝试刷新会话
-        const { data: session } = await supabase.auth.refreshSession()
-        if (session) {
-          // 重新尝试获取数据
-          const { data: retryData, error: retryError } = await supabase
-            .from('work_order_cn')
-            .select('*')
-            .order('created_time', { ascending: false })
-          
-          if (retryError) {
-            console.error('重试获取数据失败:', retryError)
-            if (retryCount > 0) {
-              // 递归重试，减少重试次数
-              return await getWorkOrderData(id, retryCount - 1)
-            }
-            throw new Error('获取数据失败，请稍后重试')
-          }
-          return retryData
-        }
-      }
-      
-      // 处理其他类型的错误
-      if (error.code === 'PGRST301') {
-        throw new Error('数据库连接失败，请稍后重试')
-      } else if (error.code === '42501') {
-        throw new Error('没有权限访问该数据')
-      } else {
-        throw new Error(error.message || '获取数据失败，请稍后重试')
-      }
+      throw new Error(error.message)
     }
-    
     return data
-  } catch (err) {
-    console.error('请求异常:', err)
-    if (retryCount > 0) {
-      // 等待1秒后重试
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      return await getWorkOrderData(id, retryCount - 1)
+  }
+  else {
+    const { data, error } = await supabase
+      .from('work_order_cn')
+      .select('*')
+      .order('created_time', { ascending: false })
+      .match({ id: id })
+    if (error) {
+      throw new Error(error.message)
     }
-    throw err
+    return data
   }
 }
 

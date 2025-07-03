@@ -101,9 +101,9 @@ export default function HomeScreen() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 64,
+                  width: 60,
+                  height: 60,
+                  borderRadius: 60,
                   marginBottom: 6
                 }}>
                 <MaterialIcons
@@ -129,9 +129,9 @@ export default function HomeScreen() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 64,
+                  width: 60,
+                  height: 60,
+                  borderRadius: 60,
                   marginBottom: 6
                 }}>
                 <Ionicons
@@ -150,9 +150,9 @@ export default function HomeScreen() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 64,
+                  width: 60,
+                  height: 60,
+                  borderRadius: 60,
                   marginBottom: 6,
                 }}>
                 <Ionicons
@@ -171,9 +171,9 @@ export default function HomeScreen() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 64,
+                  width: 60,
+                  height: 60,
+                  borderRadius: 60,
                   marginBottom: 6,
                 }}>
                 <MaterialCommunityIcons
