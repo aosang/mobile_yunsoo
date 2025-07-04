@@ -68,3 +68,11 @@ export const getWorkOrderData = async (id?: string, cId?: string) => {
   }
 }
 
+export const getDeviceList = async () => {
+  const { data, error } = await supabase.from('it_assets_cn').select('*');
+  if (error) {
+    console.error(error);
+  }
+  return data;
+}
+

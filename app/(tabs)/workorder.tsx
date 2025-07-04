@@ -251,12 +251,14 @@ export default function WorkOrder() {
         />
       </SafeAreaView>
       
-      <TouchableOpacity style={{
+      <TouchableOpacity
+      onPress={() => router.push('/views/createworkorder')}
+      style={{
         width: 52,
         height: 52,
         backgroundColor: '#2a6fff',
         position: 'absolute',
-        bottom: 60,
+        bottom: 40,
         right: 15,
         borderRadius: 30,
         zIndex: 10,

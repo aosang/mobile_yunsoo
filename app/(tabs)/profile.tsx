@@ -16,7 +16,7 @@ export default function Profile() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const getSignOut = async () => {
     await supabase.auth.signOut()
-    router.replace('/home')
+    router.replace('/login')
   }
 
   const getMyProfileInfo = async () => {

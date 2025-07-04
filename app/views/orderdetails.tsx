@@ -1,8 +1,9 @@
+import { getHeaderStyle } from '@/lib/commonFunction';
 import { WorkOrderProps } from '@/lib/dbtype';
 import { getWorkOrderData } from '@/lib/pubFunction';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from "react";
@@ -30,19 +31,7 @@ export default function OrderDetails() {
 
   useEffect(() => {
     getOrderDetails()
-    
-    navigation.setOptions({
-      title: "工单详情",
-      headerTitleAlign: "center",
-      headerStyle: {
-        backgroundColor: '#2a6fff',
-      },
-      headerTitleStyle: {
-        fontSize: 16,
-        color: '#fff',
-      },
-      headerTintColor: '#fff',
-    });
+    getHeaderStyle(navigation, "工单详情")
   }, [navigation]);
 
   return (
@@ -82,7 +71,7 @@ export default function OrderDetails() {
         )}
         {orderDetails[0].created_status == '待处理' && (
           <>
-            <AntDesign name="check" size={20} color="white" />
+            <MaterialCommunityIcons name="clock-time-three" size={20} color="white" />
             <Text style={{color: 'white', fontSize: 13, fontWeight: 'bold', lineHeight: 30}}>待处理</Text>
           </>
         )}
@@ -131,13 +120,17 @@ export default function OrderDetails() {
         </View>
         <Text style={{marginTop: 3, color: '#555', paddingHorizontal: 16}}>{orderDetails[0].created_text}</Text>
       </View>
-      <View style={{marginBottom: 16}}>
-        <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2}}>
-          <Entypo name="bookmark" size={14} color="#2a6fff" />
-          <Text style={{color: '#000'}}>解决方案：</Text>
+      
+      {orderDetails[0].created_solved && (
+        <View style={{marginBottom: 16}}>
+          <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2}}>
+            <Entypo name="bookmark" size={14} color="#2a6fff" />
+            <Text style={{color: '#000'}}>解决方案：</Text>
+          </View>
+          <Text style={{marginTop: 3, color: '#555', paddingHorizontal: 16}}>{orderDetails[0].created_solved}</Text>
         </View>
-        <Text style={{marginTop: 3, color: '#555', paddingHorizontal: 16}}>{orderDetails[0].created_solved}</Text>
-      </View>
+      )}
+      
       {orderDetails[0].created_remark && (
         <View style={{marginBottom: 16}}>
           <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2}}>
