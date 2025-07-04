@@ -1,12 +1,10 @@
 import { getHeaderStyle } from "@/lib/commonFunction";
 import { getDeviceList } from "@/lib/pubFunction";
 import { getWorkBrand, getWorkOrderStatus, getWorkOrderType } from "@/lib/pubWorkOrder";
-import Entypo from '@expo/vector-icons/Entypo';
-import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Brand {
@@ -14,7 +12,114 @@ interface Brand {
   value: string;
 }
 
+// 自定义选择器组件
+const CustomPicker = ({ 
+  value, 
+  onValueChange, 
+  placeholder, 
+  items, 
+  style 
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+  placeholder: string;
+  items: Array<{label: string; value: string}>;
+  style?: any;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const selectedItem = items.find(item => item.value === value);
+
+  return (
+    <View>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => setIsOpen(true)}
+        style={{
+          borderWidth: 1,
+          borderColor: '#ccc',
+          borderRadius: 4,
+          paddingVertical: 12,
+          paddingHorizontal: 10,
+          backgroundColor: 'white',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          minHeight: 44,
+        }}
+      >
+        <Text style={{ 
+          fontSize: 14, 
+          color: selectedItem ? '#000' : '#999',
+          flex: 1 
+        }}>
+          {selectedItem ? selectedItem.label : placeholder}
+        </Text>
+        <Text style={{ fontSize: 16, color: '#333' }}>▼</Text>
+      </TouchableOpacity>
+      
+      <Modal
+        visible={isOpen}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsOpen(false)}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          justifyContent: 'flex-end'
+        }}>
+          <View style={{
+            backgroundColor: 'white',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            padding: 20,
+            maxHeight: '50%'
+          }}>
+            <View style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 20
+            }}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>请选择</Text>
+              <TouchableOpacity onPress={() => setIsOpen(false)}>
+                <Text style={{ fontSize: 16, color: '#007AFF' }}>取消</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView>
+              {items.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    onValueChange(item.value);
+                    setIsOpen(false);
+                  }}
+                  style={{
+                    paddingVertical: 15,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#f0f0f0'
+                  }}
+                >
+                  <Text style={{
+                    fontSize: 16,
+                    color: item.value === value ? '#007AFF' : '#000'
+                  }}>
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
 export default function CreateWorkOrder() {
+  const [myValue, setMyValue] = useState('');
   const navigation = useNavigation();
   const [selectedValue, setSelectedValue] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -85,6 +190,22 @@ export default function CreateWorkOrder() {
           paddingVertical: 15
         }}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text>请选择设备：</Text>
+            <View style={{ width: 180 }}>
+              <CustomPicker
+                value={myValue}
+                onValueChange={(val) => setMyValue(val)}
+                placeholder="请选择..."
+                items={[
+                  { label: '苹果', value: 'apple' },
+                  { label: '香蕉', value: 'banana' },
+                  { label: '橘子', value: 'orange' },
+                ]}
+              />
+            </View>
+            {/* {myValue ? <Text>你选择了：{myValue}</Text> : null} */}
+          </View>
+          {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text>选择设备：</Text>
             <View style={{
               width: 180,
@@ -93,10 +214,9 @@ export default function CreateWorkOrder() {
               position: 'relative',
               backgroundColor: '#fff',
             }}>
-              <Picker
-                mode="dialog"
+              <PickerIOS
                 selectedValue={selectedValue}
-                onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                // onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
                 style={{ 
                   width: 180, 
                   fontSize: 14, 
@@ -104,14 +224,14 @@ export default function CreateWorkOrder() {
                   backgroundColor: 'transparent',
                   opacity: 1,
                 }}
-                dropdownIconColor="transparent"
-                dropdownIconRippleColor="transparent"
-                itemStyle={{ backgroundColor: 'transparent' }}
+                // dropdownIconColor="transparent"
+                // dropdownIconRippleColor="transparent"
+                // itemStyle={{ backgroundColor: 'transparent' }}
               >
                 {deviceList.map((item: any) => (
-                  <Picker.Item label={item.product_name} value={item.id} key={`device-${item.id}`} style={{ fontSize: 14, color: '#000' }} />
+                  <PickerIOS.Item label={item.product_name} value={item.id} key={`device-${item.id}`} />
                 ))}
-              </Picker>
+              </PickerIOS>
               <View style={{
                 position: 'absolute',
                 right: 10,
@@ -128,137 +248,50 @@ export default function CreateWorkOrder() {
                 <Entypo name="chevron-right" size={16} color="#333" />
               </View>
             </View>
-          </View>
+          </View> */}
           {/* 选择状态 */}
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
             <Text>选择状态：</Text>
-            <View style={{
-              width: 180,
-              minHeight: 40,
-              justifyContent: 'center',
-              position: 'relative',
-              backgroundColor: '#fff',
-            }}>
-              <Picker
-                mode="dialog"
-                selectedValue={selectedStatus}
-                onValueChange={(itemValue, itemIndex) => setSelectedStatus(itemValue)}
-                style={{ 
-                  width: 180, 
-                  fontSize: 14, 
-                  color: '#000',
-                  backgroundColor: 'transparent',
-                }}
-                dropdownIconColor="transparent"
-                dropdownIconRippleColor="transparent"
-              >
-                {workOrderStatus.map((item: any) => (
-                  <Picker.Item label={item.value} value={item.id} key={`status-${item.id}`} style={{ fontSize: 14, color: '#000' }} />
-                ))}
-              </Picker>
-              <View style={{
-                position: 'absolute',
-                right: 10,
-                top: '50%',
-                transform: [{ translateY: '-50%'}],
-                pointerEvents: 'none',
-                backgroundColor: '#fff',
-                width: 30,
-                height: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1
-              }}>
-                <Entypo name="chevron-right" size={16} color="#333" />
-              </View>
+            <View style={{ width: 180 }}>
+              <CustomPicker
+                value={selectedStatus}
+                onValueChange={(val) => setSelectedStatus(val)}
+                placeholder="请选择状态..."
+                items={workOrderStatus.map((item: any) => ({
+                  label: item.value,
+                  value: item.id
+                }))}
+              />
             </View>
           </View>
           {/* 选择设备类型 */}
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
             <Text>设备类型：</Text>
-            <View style={{
-              width: 180,
-              minHeight: 40,
-              justifyContent: 'center',
-              position: 'relative',
-              backgroundColor: '#fff',
-            }}>
-              <Picker
-                mode="dialog"
-                selectedValue={selectedType}
-                onValueChange={changeType}
-                style={{ 
-                  width: 180, 
-                  fontSize: 14, 
-                  color: '#000',
-                  backgroundColor: 'transparent',
-                }}
-                dropdownIconColor="transparent"
-                dropdownIconRippleColor="transparent"
-              >
-                {workOrderType.map((item: any) => (
-                  <Picker.Item label={item.value} value={item.value} key={`type-${item.id}`} style={{ fontSize: 14, color: '#000' }} />
-                ))}
-              </Picker>
-              <View style={{
-                position: 'absolute',
-                right: 10,
-                top: '50%',
-                transform: [{ translateY: '-50%'}],
-                pointerEvents: 'none',
-                backgroundColor: '#fff',
-                width: 30,
-                height: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1
-              }}>
-                <Entypo name="chevron-right" size={20} color="#333" />
-              </View>
+            <View style={{ width: 180 }}>
+              <CustomPicker
+                value={selectedType}
+                onValueChange={(val) => changeType(val)}
+                placeholder="请选择类型..."
+                items={workOrderType.map((item: any) => ({
+                  label: item.value,
+                  value: item.value
+                }))}
+              />
             </View>
           </View>
           {/* 选择品牌 */}
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
             <Text>选择品牌：</Text>
-            <View style={{
-              width: 180,
-              minHeight: 40,
-              justifyContent: 'center',
-              position: 'relative',
-              backgroundColor: '#fff',
-            }}>
-              <Picker
-                mode="dialog"
-                selectedValue={selectedBrand}
-                onValueChange={(itemValue, itemIndex) => setSelectedBrand(itemValue)}
-                style={{ 
-                  width: 180, 
-                  fontSize: 14, 
-                  color: '#000',
-                  backgroundColor: 'transparent',
-                }}
-                dropdownIconColor="transparent"
-                dropdownIconRippleColor="transparent"
-              >
-                {workBrand.map((item: any) => (
-                  <Picker.Item label={item.value} value={item.id} key={`brand-${item.id}`} style={{ fontSize: 14, color: '#000' }} />
-                ))}
-              </Picker>
-              <View style={{
-                position: 'absolute',
-                right: 10,
-                top: '50%',
-                transform: [{ translateY: '-50%'}],
-                pointerEvents: 'none',
-                backgroundColor: '#fff',
-                width: 30,
-                height: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1
-              }}>
-                <Entypo name="chevron-right" size={20} color="#333" />
-              </View>
+            <View style={{ width: 180 }}>
+              <CustomPicker
+                value={selectedBrand}
+                onValueChange={(val) => setSelectedBrand(val)}
+                placeholder="请选择品牌..."
+                items={workBrand.map((item: any) => ({
+                  label: item.value,
+                  value: item.id
+                }))}
+              />
             </View>
           </View>
           {/* 创建时间 */}

@@ -4,7 +4,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, FlatList, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { Alert, FlatList, Platform, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView, RectButton, Swipeable } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
@@ -258,7 +258,7 @@ export default function WorkOrder() {
         height: 52,
         backgroundColor: '#2a6fff',
         position: 'absolute',
-        bottom: 40,
+        bottom: Platform.OS === 'ios' ? 120 : 40,
         right: 15,
         borderRadius: 30,
         zIndex: 10,

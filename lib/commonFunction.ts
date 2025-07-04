@@ -12,5 +12,6 @@ export const getHeaderStyle = ( navigation: Omit<NavigationProp<ParamListBase>, 
       fontSize: 16,
     },
     headerTintColor: '#fff',
+    headerBackTitle: '返回',
   })
 }
