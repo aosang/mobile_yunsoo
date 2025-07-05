@@ -1,9 +1,10 @@
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import { getHeaderStyle } from "@/lib/commonFunction";
 import { getDeviceList } from "@/lib/pubFunction";
 import { getWorkBrand, getWorkOrderStatus, getWorkOrderType } from "@/lib/pubWorkOrder";
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,13 +19,17 @@ const CustomPicker = ({
   onValueChange, 
   placeholder, 
   items, 
-  style 
+  style,
+  icon,
+  iconColor = '#333'
 }: {
   value: string;
   onValueChange: (value: string) => void;
   placeholder: string;
   items: Array<{label: string; value: string}>;
   style?: any;
+  icon?: ReactNode;
+  iconColor?: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -36,16 +41,15 @@ const CustomPicker = ({
         activeOpacity={0.7}
         onPress={() => setIsOpen(true)}
         style={{
-          borderWidth: 1,
-          borderColor: '#ccc',
+          borderWidth: 0,
           borderRadius: 4,
-          paddingVertical: 12,
+          paddingVertical: 8,
           paddingHorizontal: 10,
           backgroundColor: 'white',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          minHeight: 44,
+          minHeight: 36,
         }}
       >
         <Text style={{ 
@@ -55,7 +59,13 @@ const CustomPicker = ({
         }}>
           {selectedItem ? selectedItem.label : placeholder}
         </Text>
-        <Text style={{ fontSize: 16, color: '#333' }}>▼</Text>
+        {icon ? (
+          <View>
+            {icon}
+          </View>
+        ) : (
+          <Text style={{ fontSize: 16, color: iconColor }}>▼</Text>
+        )}
       </TouchableOpacity>
       
       <Modal
@@ -123,7 +133,7 @@ export default function CreateWorkOrder() {
   const navigation = useNavigation();
   const [selectedValue, setSelectedValue] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [selectedType, setSelectedType] = useState('电脑');
+  const [selectedType, setSelectedType] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
   const [deviceList, setDeviceList] = useState([]);
   const [workOrderStatus, setWorkOrderStatus] = useState([]);
@@ -190,65 +200,21 @@ export default function CreateWorkOrder() {
           paddingVertical: 15
         }}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text>请选择设备：</Text>
-            <View style={{ width: 180 }}>
+            <Text>选择设备：</Text>
+            <View style={{ width: 180,}}>
               <CustomPicker
                 value={myValue}
                 onValueChange={(val) => setMyValue(val)}
-                placeholder="请选择..."
-                items={[
-                  { label: '苹果', value: 'apple' },
-                  { label: '香蕉', value: 'banana' },
-                  { label: '橘子', value: 'orange' },
-                ]}
+                placeholder="请选择设备..."
+                items={deviceList.map((item: any) => ({
+                  label: item.value,
+                  value: item.id
+                }))}
+                icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
               />
             </View>
-            {/* {myValue ? <Text>你选择了：{myValue}</Text> : null} */}
           </View>
-          {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text>选择设备：</Text>
-            <View style={{
-              width: 180,
-              minHeight: 40,
-              justifyContent: 'center',
-              position: 'relative',
-              backgroundColor: '#fff',
-            }}>
-              <PickerIOS
-                selectedValue={selectedValue}
-                // onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-                style={{ 
-                  width: 180, 
-                  fontSize: 14, 
-                  color: '#000',
-                  backgroundColor: 'transparent',
-                  opacity: 1,
-                }}
-                // dropdownIconColor="transparent"
-                // dropdownIconRippleColor="transparent"
-                // itemStyle={{ backgroundColor: 'transparent' }}
-              >
-                {deviceList.map((item: any) => (
-                  <PickerIOS.Item label={item.product_name} value={item.id} key={`device-${item.id}`} />
-                ))}
-              </PickerIOS>
-              <View style={{
-                position: 'absolute',
-                right: 10,
-                top: '50%',
-                transform: [{ translateY: '-50%'}],
-                pointerEvents: 'none',
-                backgroundColor: '#fff',
-                width: 30,
-                height: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1
-              }}>
-                <Entypo name="chevron-right" size={16} color="#333" />
-              </View>
-            </View>
-          </View> */}
+      
           {/* 选择状态 */}
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
             <Text>选择状态：</Text>
@@ -261,6 +227,7 @@ export default function CreateWorkOrder() {
                   label: item.value,
                   value: item.id
                 }))}
+                icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
               />
             </View>
           </View>
@@ -276,29 +243,39 @@ export default function CreateWorkOrder() {
                   label: item.value,
                   value: item.value
                 }))}
+                icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
               />
             </View>
           </View>
           {/* 选择品牌 */}
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
-            <Text>选择品牌：</Text>
-            <View style={{ width: 180 }}>
-              <CustomPicker
-                value={selectedBrand}
-                onValueChange={(val) => setSelectedBrand(val)}
-                placeholder="请选择品牌..."
-                items={workBrand.map((item: any) => ({
-                  label: item.value,
-                  value: item.id
-                }))}
-              />
+          {selectedType && (
+            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
+              <Text>选择品牌：</Text>
+              <View style={{ width: 180 }}>
+                <CustomPicker
+                  value={selectedBrand}
+                  onValueChange={(val) => setSelectedBrand(val)}
+                  placeholder="请选择品牌..."
+                  items={workBrand.map((item: any) => ({
+                    label: item.value,
+                    value: item.id
+                  }))}
+                  icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
+                />
+              </View>
             </View>
-          </View>
+          )}
           {/* 创建时间 */}
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ 
+            display: 'flex', 
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            marginTop: 15
+          }}>
             <Text>创建时间：</Text>
             <View style={{
-              width: 165,
+              width: 170,
               minHeight: 40,
               justifyContent: 'center',
               position: 'relative',
@@ -312,11 +289,11 @@ export default function CreateWorkOrder() {
             flexDirection: 'row', 
             alignItems: 'center', 
             justifyContent: 'space-between',
-            marginTop: 4
+            marginTop: 8
           }}>
             <Text>更新时间：</Text>
             <View style={{
-              width: 165,
+              width: 170,
               minHeight: 40,
               justifyContent: 'center',
               position: 'relative',
