@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { ReactNode, useEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // 自定义选择器组件
@@ -243,204 +243,215 @@ export default function CreateWorkOrder() {
 
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <StatusBar style="light" />
-      <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
-        <View style={{ 
-          backgroundColor: 'white', 
-          width: 380, 
-          alignSelf: 'center', 
-          boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
-          display: 'flex',
-          marginTop: 20,
-          paddingHorizontal: 12,
-          paddingVertical: 15
-        }}>
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text>选择设备：</Text>
-            <View style={{ width: 180}}>
-              <CustomPicker
-                value={workOrderForm.created_product ?? ''}
-                onValueChange={changeDevice}
-                placeholder="请选择设备..."
-                items={deviceList.map((item: any) => {
-                  return {
-                    label: item.value,
-                    value: item.value
-                  };
-                })}
-                icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
-              />
-            </View>
-          </View>
-      
-          {/* 选择状态 */}
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
-            <Text>选择状态：</Text>
-            <View style={{ width: 180 }}>
-              <CustomPicker
-                value={workOrderForm.created_status}
-                onValueChange={(val) => setWorkOrderForm({...workOrderForm, created_status: val})}
-                placeholder="请选择状态..."
-                items={workOrderStatus.map((item: any) => ({
-                  label: item.value,
-                  value: item.value
-                }))}
-                icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
-              />
-            </View>
-          </View>
-          {/* 选择设备类型 */}
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
-            <Text>设备类型：</Text>
-            <View style={{ width: 180 }}>
-              <CustomPicker
-                value={workOrderForm.created_type}
-                onValueChange={changeType}
-                placeholder="请选择类型..."
-                items={workOrderType.map((item: any) => ({
-                  label: item.value,
-                  value: item.value
-                }))}
-                icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
-              />
-            </View>
-          </View>
-          {/* 选择品牌 */}
-          {workOrderForm.created_type && (
-            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
-              <Text>选择品牌：</Text>
-              <View style={{ width: 180 }}>
-                <CustomPicker
-                  value={workOrderForm.created_brand}
-                  onValueChange={(val) => setWorkOrderForm({...workOrderForm, created_brand: val})}
-                  placeholder="请选择品牌..."
-                  items={workBrand.map((item: any) => ({
-                    label: item.value,
-                    value: item.value
-                  }))}
-                  icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+        <StatusBar style="light" />
+        <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
+          <ScrollView 
+            style={{ flex: 1 }}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+            contentContainerStyle={{ paddingBottom: 50 }}
+          >
+            <View style={{ 
+              backgroundColor: 'white', 
+              width: 380, 
+              alignSelf: 'center', 
+              boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
+              display: 'flex',
+              marginTop: 20,
+              paddingHorizontal: 12,
+              paddingVertical: 15,
+              marginBottom: Platform.OS === 'ios' ? 30 : 0
+            }}>
+              <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text>选择设备：</Text>
+                <View style={{ width: 180}}>
+                  <CustomPicker
+                    value={workOrderForm.created_product ?? ''}
+                    onValueChange={changeDevice}
+                    placeholder="请选择设备..."
+                    items={deviceList.map((item: any) => {
+                      return {
+                        label: item.value,
+                        value: item.value
+                      };
+                    })}
+                    icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
+                  />
+                </View>
+              </View>
+          
+              {/* 选择状态 */}
+              <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
+                <Text>选择状态：</Text>
+                <View style={{ width: 180 }}>
+                  <CustomPicker
+                    value={workOrderForm.created_status}
+                    onValueChange={(val) => setWorkOrderForm({...workOrderForm, created_status: val})}
+                    placeholder="请选择状态..."
+                    items={workOrderStatus.map((item: any) => ({
+                      label: item.value,
+                      value: item.value
+                    }))}
+                    icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
+                  />
+                </View>
+              </View>
+              {/* 选择设备类型 */}
+              <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
+                <Text>设备类型：</Text>
+                <View style={{ width: 180 }}>
+                  <CustomPicker
+                    value={workOrderForm.created_type}
+                    onValueChange={changeType}
+                    placeholder="请选择类型..."
+                    items={workOrderType.map((item: any) => ({
+                      label: item.value,
+                      value: item.value
+                    }))}
+                    icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
+                  />
+                </View>
+              </View>
+              {/* 选择品牌 */}
+              {workOrderForm.created_type && (
+                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
+                  <Text>选择品牌：</Text>
+                  <View style={{ width: 180 }}>
+                    <CustomPicker
+                      value={workOrderForm.created_brand}
+                      onValueChange={(val) => setWorkOrderForm({...workOrderForm, created_brand: val})}
+                      placeholder="请选择品牌..."
+                      items={workBrand.map((item: any) => ({
+                        label: item.value,
+                        value: item.value
+                      }))}
+                      icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
+                    />
+                  </View>
+                </View>
+              )}
+              {/* 创建人 */}
+              <View style={{ 
+                display: 'flex', 
+                flexDirection: 'row', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                marginTop: 15
+              }}>
+                <Text>创建人：</Text>
+                <View style={{
+                  width: 170,
+                  minHeight: 40,
+                  justifyContent: 'center',
+                  position: 'relative',
+                  backgroundColor: '#fff',
+                }}>
+                  <Text>{workOrderForm.created_name}</Text>
+                </View>
+              </View>
+              {/* 创建时间 */}
+              <View style={{ 
+                display: 'flex', 
+                flexDirection: 'row', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                marginTop: 15
+              }}>
+                <Text>创建时间：</Text>
+                <View style={{
+                  width: 170,
+                  minHeight: 40,
+                  justifyContent: 'center',
+                  position: 'relative',
+                  backgroundColor: '#fff',
+                }}>
+                  <Text>{workOrderForm.created_time}</Text>
+                </View>
+              </View>
+              <View style={{ 
+                display: 'flex', 
+                flexDirection: 'row', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                marginTop: 8
+              }}>
+                <Text>更新时间：</Text>
+                <View style={{
+                  width: 170,
+                  minHeight: 40,
+                  justifyContent: 'center',
+                  position: 'relative',
+                  backgroundColor: '#fff',
+                }}>
+                  <Text>{workOrderForm.created_update}</Text>
+                </View>
+              </View>
+              <View style={{width: '100%' , height: 1, backgroundColor: '#ccc', marginVertical: 15}}></View>
+              <View style={{display: 'flex', flexDirection: 'column'}}>
+                <Text style={{ marginBottom: 5 }}>问题描述：</Text>
+                <TextInput style={{
+                  width: '100%', 
+                  minHeight: 100, 
+                  backgroundColor: '#fff',
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  paddingHorizontal: 10,
+                  textAlignVertical: 'top',
+                }} 
+                placeholder="请输入问题描述"
+                multiline
+                numberOfLines={5}
+                maxLength={260}
+                onChangeText={(text) => setWorkOrderForm({...workOrderForm, created_text: text})}
+                />
+              </View>
+
+              <View style={{display: 'flex', flexDirection: 'column', marginTop: 15}}>
+                <Text style={{ marginBottom: 5 }}>解决方案：</Text>
+                <TextInput style={{
+                  width: '100%', 
+                  minHeight: 100, 
+                  backgroundColor: '#fff',
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  paddingHorizontal: 10,
+                  textAlignVertical: 'top',
+                }} 
+                placeholder="请输入解决方案"
+                multiline
+                numberOfLines={5}
+                maxLength={260}
+                onChangeText={(text) => setWorkOrderForm({...workOrderForm, created_solved: text})}
+                />
+              </View>
+
+              <View style={{display: 'flex', flexDirection: 'column', marginTop: 15}}>
+                <Text style={{ marginBottom: 5 }}>其它备注：</Text>
+                <TextInput style={{
+                  width: '100%', 
+                  minHeight: 60, 
+                  backgroundColor: '#fff',
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  paddingHorizontal: 10,
+                  textAlignVertical: 'top',
+                }} 
+                placeholder="请输入备注"
+                multiline
+                numberOfLines={4}
+                maxLength={120}
                 />
               </View>
             </View>
-          )}
-          {/* 创建人 */}
-          <View style={{ 
-            display: 'flex', 
-            flexDirection: 'row', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            marginTop: 15
-          }}>
-            <Text>创建人：</Text>
-            <View style={{
-              width: 170,
-              minHeight: 40,
-              justifyContent: 'center',
-              position: 'relative',
-              backgroundColor: '#fff',
-            }}>
-              <Text>{workOrderForm.created_name}</Text>
-            </View>
-          </View>
-          {/* 创建时间 */}
-          <View style={{ 
-            display: 'flex', 
-            flexDirection: 'row', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            marginTop: 15
-          }}>
-            <Text>创建时间：</Text>
-            <View style={{
-              width: 170,
-              minHeight: 40,
-              justifyContent: 'center',
-              position: 'relative',
-              backgroundColor: '#fff',
-            }}>
-              <Text>{workOrderForm.created_time}</Text>
-            </View>
-          </View>
-          <View style={{ 
-            display: 'flex', 
-            flexDirection: 'row', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            marginTop: 8
-          }}>
-            <Text>更新时间：</Text>
-            <View style={{
-              width: 170,
-              minHeight: 40,
-              justifyContent: 'center',
-              position: 'relative',
-              backgroundColor: '#fff',
-            }}>
-              <Text>{workOrderForm.created_update}</Text>
-            </View>
-          </View>
-          <View style={{width: '100%' , height: 1, backgroundColor: '#ccc', marginVertical: 15}}></View>
-          <View style={{display: 'flex', flexDirection: 'column'}}>
-            <Text style={{ marginBottom: 5 }}>问题描述：</Text>
-            <TextInput style={{
-              width: '100%', 
-              minHeight: 100, 
-              backgroundColor: '#fff',
-              borderWidth: 1,
-              borderColor: '#ccc',
-              paddingHorizontal: 10,
-              textAlignVertical: 'top',
-            }} 
-            placeholder="请输入问题描述"
-            multiline
-            numberOfLines={5}
-            maxLength={260}
-            onChangeText={(text) => setWorkOrderForm({...workOrderForm, created_text: text})}
-            />
-          </View>
-
-          <View style={{display: 'flex', flexDirection: 'column', marginTop: 15}}>
-            <Text style={{ marginBottom: 5 }}>解决方案：</Text>
-            <TextInput style={{
-              width: '100%', 
-              minHeight: 100, 
-              backgroundColor: '#fff',
-              borderWidth: 1,
-              borderColor: '#ccc',
-              paddingHorizontal: 10,
-              textAlignVertical: 'top',
-            }} 
-            placeholder="请输入解决方案"
-            multiline
-            numberOfLines={5}
-            maxLength={260}
-            onChangeText={(text) => setWorkOrderForm({...workOrderForm, created_solved: text})}
-            />
-          </View>
-
-          <View style={{display: 'flex', flexDirection: 'column', marginTop: 15}}>
-            <Text style={{ marginBottom: 5 }}>其它备注：</Text>
-            <TextInput style={{
-              width: '100%', 
-              minHeight: 60, 
-              backgroundColor: '#fff',
-              borderWidth: 1,
-              borderColor: '#ccc',
-              paddingHorizontal: 10,
-              textAlignVertical: 'top',
-            }} 
-            placeholder="请输入备注"
-            multiline
-            numberOfLines={4}
-            maxLength={120}
-            />
-          </View>
-        </View>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   )
 }
