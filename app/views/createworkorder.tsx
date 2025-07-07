@@ -1,17 +1,14 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import { getHeaderStyle } from "@/lib/commonFunction";
-import { getDeviceList } from "@/lib/pubFunction";
-import { getWorkBrand, getWorkOrderStatus, getWorkOrderType } from "@/lib/pubWorkOrder";
+import { getHeaderStyle, getPublicTime } from "@/lib/commonFunction";
+import { BrandProps, WorkOrderProps } from "@/lib/dbtype";
+import { getDeviceList, getUserInfo } from "@/lib/pubFunction";
+import { getInsertWorkOrder, getWorkBrand, getWorkOrderStatus, getWorkOrderType } from "@/lib/pubWorkOrder";
 import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { ReactNode, useEffect, useState } from "react";
-import { KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-interface Brand {
-  id: string | number;
-  value: string;
-}
 
 // 自定义选择器组件
 const CustomPicker = ({ 
@@ -19,7 +16,6 @@ const CustomPicker = ({
   onValueChange, 
   placeholder, 
   items, 
-  style,
   icon,
   iconColor = '#333'
 }: {
@@ -27,13 +23,17 @@ const CustomPicker = ({
   onValueChange: (value: string) => void;
   placeholder: string;
   items: Array<{label: string; value: string}>;
-  style?: any;
   icon?: ReactNode;
   iconColor?: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   
   const selectedItem = items.find(item => item.value === value);
+  
+  const handleValueChange = (newValue: string) => {
+    onValueChange(newValue);
+    setIsOpen(false);
+  };
 
   return (
     <View>
@@ -103,8 +103,7 @@ const CustomPicker = ({
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
-                    onValueChange(item.value);
-                    setIsOpen(false);
+                    handleValueChange(item.value);
                   }}
                   style={{
                     paddingVertical: 15,
@@ -129,16 +128,25 @@ const CustomPicker = ({
 };
 
 export default function CreateWorkOrder() {
-  const [myValue, setMyValue] = useState('');
-  const navigation = useNavigation();
-  const [selectedValue, setSelectedValue] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [selectedType, setSelectedType] = useState('');
-  const [selectedBrand, setSelectedBrand] = useState('');
-  const [deviceList, setDeviceList] = useState([]);
-  const [workOrderStatus, setWorkOrderStatus] = useState([]);
-  const [workOrderType, setWorkOrderType] = useState([]);
-  const [workBrand, setWorkBrand] = useState<Brand[]>([]);
+  const router = useRouter()
+  const navigation = useNavigation()
+  const [workOrderForm, setWorkOrderForm] = useState<WorkOrderProps>(() => ({
+    created_update: '',
+    created_time: '',
+    created_id: '',
+    created_product: '',
+    created_name: '',
+    created_solved: '',
+    created_type: '',
+    created_brand: '',
+    created_status: '',
+    created_remark: '',
+    created_text: ''
+  }))
+  const [deviceList, setDeviceList] = useState([])
+  const [workOrderStatus, setWorkOrderStatus] = useState([])
+  const [workOrderType, setWorkOrderType] = useState([])
+  const [workBrand, setWorkBrand] = useState<BrandProps[]>([])
   const getDeviceData = async () => {
     const data = await getDeviceList();
     setDeviceList(data as []);
@@ -155,7 +163,7 @@ export default function CreateWorkOrder() {
   }
 
   const changeType = async (key: string) => {
-    setSelectedType(key);
+    setWorkOrderForm({...workOrderForm, created_type: key})
     
     const data = await getWorkBrand(key);
     if (!data?.[0]?.product_brand_cn) {
@@ -170,17 +178,69 @@ export default function CreateWorkOrder() {
     setWorkBrand(formattedBrands);
   }
 
-
-  useEffect(() => {
-    getHeaderStyle(navigation, "创建工单")
-  }, [navigation])
+  const changeDevice = (val: string) => {
+    setWorkOrderForm(prev => {
+      const newForm = {
+        ...prev,
+        created_product: val.trim()
+      }
+      return newForm;
+    })
+  }
+  
+  const checkOrderForm = async () => {
+    if (!workOrderForm.created_product) {
+      Alert.alert('提示', '请选择设备')
+    } else if (!workOrderForm.created_status) {
+      Alert.alert('提示', '请选择状态')
+    } else if (!workOrderForm.created_type) {
+      Alert.alert('提示', '请选择类型')
+    } else if (!workOrderForm.created_brand) {
+      Alert.alert('提示', '请选择品牌')
+    } else if (!workOrderForm.created_text) {
+      Alert.alert('提示', '请输入问题描述')
+    } else if (workOrderForm.created_status === '已解决' && !workOrderForm.created_solved) {
+      Alert.alert('提示', '请输入解决方案')
+    }else {
+      await getInsertWorkOrder(workOrderForm)
+      router.push('/workorder')
+    }
+  }
 
   useEffect(() => {
     getDeviceData();
     getWorkOrderStatusData();
     getWorkOrderTypeData();
-    changeType(selectedType);
+    getUserInfo().then(userInfo => {
+      setWorkOrderForm(prev => ({
+        ...prev,
+        created_name: userInfo.user_metadata.username
+      }))
+    })
+
+    const currentTime = getPublicTime();
+    setWorkOrderForm(prev => ({
+      ...prev,
+      created_time: currentTime[0],
+      created_update: currentTime[0],
+    }));
+
   }, [])
+
+  useEffect(() => {
+    getHeaderStyle(navigation, {
+      title: "创建工单",
+      backgroundColor: '#2a6fff',
+      titleColor: '#fff',
+      titleFontSize: 16,
+      rightButton: {
+        title: "提交",
+        onPress: () => {checkOrderForm()},
+        style: { fontSize: 16, color: '#fff'}
+      }
+    })
+  }, [navigation, workOrderForm])
+
 
   return (
     <KeyboardAvoidingView
@@ -201,15 +261,17 @@ export default function CreateWorkOrder() {
         }}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text>选择设备：</Text>
-            <View style={{ width: 180,}}>
+            <View style={{ width: 180}}>
               <CustomPicker
-                value={myValue}
-                onValueChange={(val) => setMyValue(val)}
+                value={workOrderForm.created_product ?? ''}
+                onValueChange={changeDevice}
                 placeholder="请选择设备..."
-                items={deviceList.map((item: any) => ({
-                  label: item.value,
-                  value: item.id
-                }))}
+                items={deviceList.map((item: any) => {
+                  return {
+                    label: item.value,
+                    value: item.value
+                  };
+                })}
                 icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
               />
             </View>
@@ -220,12 +282,12 @@ export default function CreateWorkOrder() {
             <Text>选择状态：</Text>
             <View style={{ width: 180 }}>
               <CustomPicker
-                value={selectedStatus}
-                onValueChange={(val) => setSelectedStatus(val)}
+                value={workOrderForm.created_status}
+                onValueChange={(val) => setWorkOrderForm({...workOrderForm, created_status: val})}
                 placeholder="请选择状态..."
                 items={workOrderStatus.map((item: any) => ({
                   label: item.value,
-                  value: item.id
+                  value: item.value
                 }))}
                 icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
               />
@@ -236,8 +298,8 @@ export default function CreateWorkOrder() {
             <Text>设备类型：</Text>
             <View style={{ width: 180 }}>
               <CustomPicker
-                value={selectedType}
-                onValueChange={(val) => changeType(val)}
+                value={workOrderForm.created_type}
+                onValueChange={changeType}
                 placeholder="请选择类型..."
                 items={workOrderType.map((item: any) => ({
                   label: item.value,
@@ -248,23 +310,42 @@ export default function CreateWorkOrder() {
             </View>
           </View>
           {/* 选择品牌 */}
-          {selectedType && (
+          {workOrderForm.created_type && (
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
               <Text>选择品牌：</Text>
               <View style={{ width: 180 }}>
                 <CustomPicker
-                  value={selectedBrand}
-                  onValueChange={(val) => setSelectedBrand(val)}
+                  value={workOrderForm.created_brand}
+                  onValueChange={(val) => setWorkOrderForm({...workOrderForm, created_brand: val})}
                   placeholder="请选择品牌..."
                   items={workBrand.map((item: any) => ({
                     label: item.value,
-                    value: item.id
+                    value: item.value
                   }))}
                   icon={<IconSymbol name="chevron.right" size={14} color="#333" />}
                 />
               </View>
             </View>
           )}
+          {/* 创建人 */}
+          <View style={{ 
+            display: 'flex', 
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            marginTop: 15
+          }}>
+            <Text>创建人：</Text>
+            <View style={{
+              width: 170,
+              minHeight: 40,
+              justifyContent: 'center',
+              position: 'relative',
+              backgroundColor: '#fff',
+            }}>
+              <Text>{workOrderForm.created_name}</Text>
+            </View>
+          </View>
           {/* 创建时间 */}
           <View style={{ 
             display: 'flex', 
@@ -281,7 +362,7 @@ export default function CreateWorkOrder() {
               position: 'relative',
               backgroundColor: '#fff',
             }}>
-              <Text>2025-01-01 12:00:00</Text>
+              <Text>{workOrderForm.created_time}</Text>
             </View>
           </View>
           <View style={{ 
@@ -299,7 +380,7 @@ export default function CreateWorkOrder() {
               position: 'relative',
               backgroundColor: '#fff',
             }}>
-              <Text>2025-01-01 12:00:00</Text>
+              <Text>{workOrderForm.created_update}</Text>
             </View>
           </View>
           <View style={{width: '100%' , height: 1, backgroundColor: '#ccc', marginVertical: 15}}></View>
@@ -318,6 +399,7 @@ export default function CreateWorkOrder() {
             multiline
             numberOfLines={5}
             maxLength={260}
+            onChangeText={(text) => setWorkOrderForm({...workOrderForm, created_text: text})}
             />
           </View>
 
@@ -336,6 +418,7 @@ export default function CreateWorkOrder() {
             multiline
             numberOfLines={5}
             maxLength={260}
+            onChangeText={(text) => setWorkOrderForm({...workOrderForm, created_solved: text})}
             />
           </View>
 

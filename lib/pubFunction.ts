@@ -42,32 +42,6 @@ export const getProfiles = async (id: string) => {
   return data
 }
 
-// 获取工单数据
-export const getWorkOrderData = async (id?: string, cId?: string) => {
-  if (cId) {
-    const { data, error } = await supabase
-      .from('work_order_cn')
-      .select('*')
-      .order('created_time', { ascending: false })
-      .match({ created_id: cId })
-    if (error) {
-      throw new Error(error.message)
-    }
-    return data
-  }
-  else {
-    const { data, error } = await supabase
-      .from('work_order_cn')
-      .select('*')
-      .order('created_time', { ascending: false })
-      .match({ id: id })
-    if (error) {
-      throw new Error(error.message)
-    }
-    return data
-  }
-}
-
 export const getDeviceList = async () => {
   const { data, error } = await supabase.from('it_assets_cn').select('*');
   if (error) {

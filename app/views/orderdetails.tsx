@@ -1,6 +1,6 @@
 import { getHeaderStyle } from '@/lib/commonFunction';
 import { WorkOrderProps } from '@/lib/dbtype';
-import { getWorkOrderData } from '@/lib/pubFunction';
+import { getWorkOrderData } from '@/lib/pubWorkOrder';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -31,11 +31,16 @@ export default function OrderDetails() {
 
   useEffect(() => {
     getOrderDetails()
-    getHeaderStyle(navigation, "工单详情")
+    getHeaderStyle(navigation, {
+      title: "工单详情",
+      backgroundColor: '#2a6fff',
+      titleColor: '#fff',
+      titleFontSize: 16,
+    })
   }, [navigation]);
 
   return (
-    <View 
+    <View   
       style={{
         width: 380, 
         backgroundColor: 'white', 

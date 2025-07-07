@@ -1,42 +1,45 @@
 import { WorkOrderProps } from '@/lib/dbtype';
-import { getUserInfo, getWorkOrderData } from '@/lib/pubFunction';
+import { getUserInfo } from '@/lib/pubFunction';
+import { getDeleteWorkOrder, getWorkOrderData } from '@/lib/pubWorkOrder';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, FlatList, Platform, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView, RectButton, Swipeable } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
-const RightActions = () => (
-  <RectButton
-    style={{
-      backgroundColor: '#ff4d4f',
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: 60,
-      height: 130
-    }}
-    onPress={() => Alert.alert(
-      "确认删除",
-      "是否确认删除该工单？",
-      [{
-        text: "取消",
-        style: "cancel"
-      }, {
-        text: "确认",
-        style: "destructive",
-        onPress: () => {
-          console.log("执行删除操作");
-        }
-      }]
-    )}
-  >
-    <Text style={{ color: 'white' }}>删除</Text>
-  </RectButton>
-);
+
+
 
 export default function WorkOrder() {
+  const RightActions = (workOrderId: string) => (
+    <RectButton
+      style={{
+        backgroundColor: '#ff4d4f',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 60,
+        height: 130
+      }}
+      onPress={() => Alert.alert(
+        "确认删除",
+        "是否确认删除该工单？",
+        [{
+          text: "取消",
+          style: "cancel"
+        }, {
+          text: "确认",
+          style: "destructive",
+          onPress: () => {deleteWorkOrderData(workOrderId)}
+        }]
+      )}
+    >
+      <Text style={{ color: 'white' }}>删除</Text>
+    </RectButton>
+  );
+
   const WorkOrderRoute = ({ status }: { status: string }) => {
     const swipeableRefs = useRef<Array<Swipeable | null>>([])
     
@@ -80,7 +83,7 @@ export default function WorkOrder() {
                     swipeableRefs.current[index] = ref;
                   }
                 }}
-                renderRightActions={RightActions}
+                renderRightActions={() => RightActions(item.created_id)}
                 onSwipeableOpen={() => closeOtherRows(index)}
               >
                 <TouchableOpacity
@@ -194,17 +197,29 @@ export default function WorkOrder() {
     })
   }
 
+  const deleteWorkOrderData = async (id: string) => {
+    await getDeleteWorkOrder(id)
+    fetchWorkOrderData()
+  }
+
   useEffect(() => {
     fetchWorkOrderData()
   }, [])
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>加载中...</Text>
-      </View>
-    )
-  }
+  // 添加页面焦点监听
+  useFocusEffect(
+    useCallback(() => {
+      fetchWorkOrderData();
+    }, [])
+  );
+
+  // if (isLoading) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //       <Text>加载中...</Text>
+  //     </View>
+  //   )
+  // }
 
   if (error) {
     return (
@@ -252,18 +267,18 @@ export default function WorkOrder() {
       </SafeAreaView>
       
       <TouchableOpacity
-      onPress={() => router.push('/views/createworkorder')}
-      style={{
-        width: 52,
-        height: 52,
-        backgroundColor: '#2a6fff',
-        position: 'absolute',
-        bottom: Platform.OS === 'ios' ? 120 : 40,
-        right: 15,
-        borderRadius: 30,
-        zIndex: 10,
-        boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)'
-      }}>
+        onPress={() => router.push('/views/createworkorder')}
+        style={{
+          width: 52,
+          height: 52,
+          backgroundColor: '#2a6fff',
+          position: 'absolute',
+          bottom: Platform.OS === 'ios' ? 120 : 40,
+          right: 15,
+          borderRadius: 30,
+          zIndex: 10,
+          boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)'
+        }}>
         <Ionicons 
           name="add" 
           size={28} 

@@ -1,3 +1,4 @@
+import { TextStyle } from "react-native";
 export type LoginForm = {
   email: string
   password: string
@@ -7,9 +8,9 @@ export type LoginForm = {
 
 export type WorkOrderProps = {
   created_update: string,
-  created_id: string,
   created_time: string,
-  created_product: string,
+  created_id: string,
+  created_product: string | null,
   created_name: string,
   created_solved: string,
   created_type: string,
@@ -25,4 +26,41 @@ export type UserInfoProps = {
   company: string,
   email: string,
   time: string
+}
+
+export type BrandProps = {
+  id: string,
+  value: string
+}
+
+export type HeaderButton = {
+  title: string;
+  onPress: () => void;
+  style?: TextStyle;
+}
+
+export type HeaderButtonProps = {
+  title: string;
+  backgroundColor?: string;
+  titleColor?: string;
+  titleFontSize?: number;
+  rightButton?: HeaderButton;
+  leftButton?: HeaderButton;
+  backTitle?: string;
+}
+
+export type HeaderConfig = {
+  title: string;
+  headerTitleAlign: "center";
+  headerStyle: {
+    backgroundColor: string;
+  }
+  headerTitleStyle: {
+    color: string;
+    fontSize: number;
+  }
+  headerTintColor: string;
+  headerBackTitle: string;
+  headerRight?: () => React.ReactNode;
+  headerLeft?: () => React.ReactNode;
 }

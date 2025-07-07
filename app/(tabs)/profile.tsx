@@ -1,6 +1,8 @@
 import { UserInfoProps } from '@/lib/dbtype';
 import { supabase } from '@/lib/initSupabase';
 import { getProfiles, getSession } from '@/lib/pubFunction';
+import Entypo from '@expo/vector-icons/Entypo';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import dayjs from 'dayjs';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -104,7 +106,7 @@ export default function Profile() {
               flexDirection: 'row', 
               alignItems: 'center' 
             }}>
-              <MaterialIcons name="info" size={18} color="#333" style={{ marginRight: 4 }} />  
+              <MaterialCommunityIcons name="office-building" size={18} color="#333" style={{ marginRight: 4 }} />
               <Text style={{ color: '#333', fontSize: 14 }}>公司名</Text>
             </View>
             <Text style={{ color: '#333', fontSize: 14 }}>{userInfo?.company}</Text>
@@ -124,10 +126,30 @@ export default function Profile() {
               flexDirection: 'row', 
               alignItems: 'center' 
             }}>
-              <MaterialIcons name="info" size={18} color="#333" style={{ marginRight: 4 }} />  
+              <MaterialIcons name="access-time-filled" size={18} color="#333" style={{ marginRight: 4 }} />
               <Text style={{ color: '#333', fontSize: 14 }}>注册时间</Text>
             </View>
             <Text style={{ color: '#333', fontSize: 14 }}>{userInfo?.time}</Text>
+          </View>
+
+          <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: 52,
+            borderBottomWidth: 1,
+            borderBottomColor: '#eee'
+          }}>
+            <View style={{ 
+              display: 'flex', 
+              flexDirection: 'row', 
+              alignItems: 'center' 
+            }}>
+              <Entypo name="book" size={18} color="#333" style={{ marginRight: 4 }} />
+              <Text style={{ color: '#333', fontSize: 14 }}>版本记录</Text>
+            </View>
+            <Text style={{ color: '#333', fontSize: 14 }}>1.0.0</Text>
           </View>
 
           <View style={{ marginTop: 30 }}>
